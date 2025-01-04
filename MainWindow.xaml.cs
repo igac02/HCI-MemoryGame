@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -39,8 +40,9 @@ namespace MemoryGameWPF
 
         private void StartGame()
         {
-            // Pokreni igru nakon odabira teme
-            StatusText.Text = "Zapamtite sekvencu i unesite je ispravno.";
+            int highestScore = GetHighestScore();  // Učitavanje najvišeg rezultata iz fajla
+            StatusText.Text = $"Najviši rezultat: {highestScore}. Zapamtite sekvencu i unesite je ispravno.";
+
             InputTextBox.IsEnabled = false;
             SubmitButton.IsEnabled = false;
             InputTextBox.Visibility = Visibility.Hidden;
@@ -94,6 +96,8 @@ namespace MemoryGameWPF
         private void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
             string userInput = InputTextBox.Text.Trim();
+            int highestScore = GetHighestScore();  // Uzimanje najvišeg rezultata iz fajla
+
             if (userInput == string.Join(" ", sequence))
             {
                 StatusText.Text = "Tačno! Prelazimo na sledeći nivo.";
@@ -104,7 +108,16 @@ namespace MemoryGameWPF
             }
             else
             {
-                StatusText.Text = $"Kraj igre! Došli ste do nivoa {currentLevel}.";
+                // Ako je trenutni nivo bolji od najvišeg, sačuvaj ga
+                if (currentLevel > highestScore)
+                {
+                    SaveHighestScore(currentLevel);  // Upisivanje novog najvišeg rezultata u fajl
+                    highestScore = currentLevel;  // Ažuriranje varijable za najviši rezultat
+                }
+
+                // Prikazivanje krajnjeg rezultata
+                StatusText.Text = $"Kraj igre! Došli ste do nivoa {currentLevel}. \n Najviši rezultat: {highestScore}.";
+
                 InputTextBox.Visibility = Visibility.Hidden;
                 SubmitButton.Visibility = Visibility.Hidden;
                 InputTextBox.IsEnabled = false;  // Onemogući unos
@@ -173,13 +186,11 @@ namespace MemoryGameWPF
             StartGameButton.Visibility = Visibility.Visible; // Prikazivanje dugmeta za pokretanje igre
         }
 
-
         private void StartGameButton_Click(object sender, RoutedEventArgs e)
         {
             StartGame();
             StartGameButton.Visibility = Visibility.Hidden; // Sakrij dugme nakon što je igra pokrenuta
         }
-
 
         private void ResetGame()
         {
@@ -258,10 +269,44 @@ namespace MemoryGameWPF
             var allWords = GenerateAnimalWords()
                 .Concat(GenerateCityWords())
                 .Concat(GenerateObjectWords())
-                .Concat(GenerateFruitAndVegetableWords())
                 .Concat(GenerateNumberWords())
+                .Concat(GenerateFruitAndVegetableWords())
                 .ToList();
-            return allWords.OrderBy(x => Guid.NewGuid()).Take(50).ToList();
+
+            var random = new Random();
+            return allWords.OrderBy(x => random.Next()).Take(20).ToList();
         }
+
+        private int GetHighestScore()
+        {
+            string filePath = "highscore.txt"; 
+
+            if (!File.Exists(filePath))
+            {
+                File.Create(filePath).Dispose(); 
+                return 0; 
+            }
+
+            string content = File.ReadAllText(filePath);
+            if (int.TryParse(content, out int highestScore))
+            {
+                return highestScore;
+            }
+
+            return 0;
+        }
+
+        private void SaveHighestScore(int score)
+        {
+            string filePath = "highscore.txt";
+
+            if (!File.Exists(filePath))
+            {
+                File.Create(filePath).Dispose();
+            }
+
+            File.WriteAllText(filePath, score.ToString());
+        }
+
     }
 }
