@@ -29,10 +29,8 @@ namespace MemoryGameWPF
             timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             timer.Tick += DisplaySequence;
 
-            // Prikaži početnu poruku
             StatusText.Text = "Odaberite opciju igranja.";
 
-            // Onemogući unos i sakrij dugmad dok se ne odabere tema
             InputTextBox.IsEnabled = false;
             SubmitButton.IsEnabled = false;
             RestartButton.Visibility = Visibility.Hidden;
@@ -40,7 +38,7 @@ namespace MemoryGameWPF
 
         private void StartGame()
         {
-            int highestScore = GetHighestScore();  // Učitavanje najvišeg rezultata iz fajla
+            int highestScore = GetHighestScore();
             StatusText.Text = $"Najviši rezultat: {highestScore}. Zapamtite sekvencu i unesite je ispravno.";
 
             InputTextBox.IsEnabled = false;
@@ -54,7 +52,7 @@ namespace MemoryGameWPF
         private void StartNewLevel()
         {
             currentLevel++;
-            sequence = GetRandomSequence();  // Generiši nasumičnu sekvencu za trenutni nivo
+            sequence = GetRandomSequence();
 
             StatusText.Text = $"Nivo {currentLevel}: Pazi na sekvencu!";
 
@@ -90,13 +88,13 @@ namespace MemoryGameWPF
         private List<string> GetRandomSequence()
         {
             Random random = new Random();
-            return wordsFromFile.OrderBy(x => random.Next()).Take(currentLevel).ToList();  // Randomizovana lista
+            return wordsFromFile.OrderBy(x => random.Next()).Take(currentLevel).ToList();
         }
 
         private void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
             string userInput = InputTextBox.Text.Trim();
-            int highestScore = GetHighestScore();  // Uzimanje najvišeg rezultata iz fajla
+            int highestScore = GetHighestScore();
 
             if (userInput == string.Join(" ", sequence))
             {
@@ -108,39 +106,36 @@ namespace MemoryGameWPF
             }
             else
             {
-                // Ako je trenutni nivo bolji od najvišeg, sačuvaj ga
                 if (currentLevel > highestScore)
                 {
-                    SaveHighestScore(currentLevel);  // Upisivanje novog najvišeg rezultata u fajl
-                    highestScore = currentLevel;  // Ažuriranje varijable za najviši rezultat
+                    SaveHighestScore(currentLevel);
+                    highestScore = currentLevel;
                 }
 
-                // Prikazivanje krajnjeg rezultata
                 StatusText.Text = $"Kraj igre! Došli ste do nivoa {currentLevel}. \n Najviši rezultat: {highestScore}.";
 
                 InputTextBox.Visibility = Visibility.Hidden;
                 SubmitButton.Visibility = Visibility.Hidden;
-                InputTextBox.IsEnabled = false;  // Onemogući unos
-                SubmitButton.IsEnabled = false;  // Onemogući dugme
-                SubmitButton.Visibility = Visibility.Hidden;  // Sakrij dugme
-                RestartButton.Visibility = Visibility.Visible;  // Prikazivanje dugmeta za restart
+                InputTextBox.IsEnabled = false;
+                SubmitButton.IsEnabled = false;
+                SubmitButton.Visibility = Visibility.Hidden;
+                RestartButton.Visibility = Visibility.Visible;
             }
         }
 
         private void RestartButton_Click(object sender, RoutedEventArgs e)
         {
-            // Resetovanje igre
             ResetGame();
             StatusText.Text = "Igra je resetovana. Pritisnite dugme za pokretanje nove igre.";
-            RestartButton.Visibility = Visibility.Hidden;  // Sakrij dugme za restart
-            StartGameButton.Visibility = Visibility.Visible;  // Prikazivanje dugmeta za pokretanje igre
+            RestartButton.Visibility = Visibility.Hidden;
+            StartGameButton.Visibility = Visibility.Visible;
         }
 
         private void InputTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                SubmitButton_Click(sender, e); // Trigger the submit button click
+                SubmitButton_Click(sender, e);
             }
         }
 
@@ -148,53 +143,52 @@ namespace MemoryGameWPF
         {
             wordsFromFile = GenerateAnimalWords();
             ResetGame();
-            StartGameButton.Visibility = Visibility.Visible; // Prikazivanje dugmeta za pokretanje igre
+            StartGameButton.Visibility = Visibility.Visible;
         }
 
         private void CitiesButton_Click(object sender, RoutedEventArgs e)
         {
             wordsFromFile = GenerateCityWords();
             ResetGame();
-            StartGameButton.Visibility = Visibility.Visible; // Prikazivanje dugmeta za pokretanje igre
+            StartGameButton.Visibility = Visibility.Visible;
         }
 
         private void ObjectsButton_Click(object sender, RoutedEventArgs e)
         {
             wordsFromFile = GenerateObjectWords();
             ResetGame();
-            StartGameButton.Visibility = Visibility.Visible; // Prikazivanje dugmeta za pokretanje igre
+            StartGameButton.Visibility = Visibility.Visible;
         }
 
         private void NumbersButton_Click(object sender, RoutedEventArgs e)
         {
             wordsFromFile = GenerateNumberWords();
             ResetGame();
-            StartGameButton.Visibility = Visibility.Visible; // Prikazivanje dugmeta za pokretanje igre
+            StartGameButton.Visibility = Visibility.Visible;
         }
 
         private void FruitsButton_Click(object sender, RoutedEventArgs e)
         {
             wordsFromFile = GenerateFruitAndVegetableWords();
             ResetGame();
-            StartGameButton.Visibility = Visibility.Visible; // Prikazivanje dugmeta za pokretanje igre
+            StartGameButton.Visibility = Visibility.Visible;
         }
 
         private void RandomButton_Click(object sender, RoutedEventArgs e)
         {
             wordsFromFile = GenerateRandomWords();
             ResetGame();
-            StartGameButton.Visibility = Visibility.Visible; // Prikazivanje dugmeta za pokretanje igre
+            StartGameButton.Visibility = Visibility.Visible;
         }
 
         private void StartGameButton_Click(object sender, RoutedEventArgs e)
         {
             StartGame();
-            StartGameButton.Visibility = Visibility.Hidden; // Sakrij dugme nakon što je igra pokrenuta
+            StartGameButton.Visibility = Visibility.Hidden;
         }
 
         private void ResetGame()
         {
-            // Resetuj sve postavke igre
             sequence.Clear();
             currentLevel = 0;
             InputTextBox.Clear();
@@ -202,11 +196,10 @@ namespace MemoryGameWPF
             SubmitButton.IsEnabled = false;
             RestartButton.Visibility = Visibility.Hidden;
 
-            // Prikaži status igre
             StatusText.Text = "Novi izbor aktiviran. Pritisnite 'Pokreni igru' za početak.";
 
             InputTextBox.Visibility = Visibility.Hidden;
-            SubmitButton.Visibility = Visibility.Hidden; // Prikazuje dugme za pokretanje
+            SubmitButton.Visibility = Visibility.Hidden;
         }
 
         private List<string> GenerateAnimalWords()
@@ -307,6 +300,5 @@ namespace MemoryGameWPF
 
             File.WriteAllText(filePath, score.ToString());
         }
-
     }
 }
