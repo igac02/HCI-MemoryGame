@@ -4,39 +4,57 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Memory Game" Height="500" Width="900"
+        Title="Memory Game" Height="650" Width="1200"
         WindowStartupLocation="CenterScreen"
-        Background="LightGray">
+        FontFamily="Segoe UI"
+        Background="Transparent"
+        AllowsTransparency="True"
+        WindowStyle="None"
+        ResizeMode="CanMinimize">
+
     <Window.Resources>
-        <!-- Stil za dugmad -->
-        <Style TargetType="Button">
+        <!-- Define card shadow effect -->
+        <DropShadowEffect x:Key="ModernCardEffect" ShadowDepth="3" BlurRadius="10" Color="#20000000" Opacity="0.4" />
+
+        <!-- Modern style for buttons -->
+        <Style x:Key="ModernButtonStyle" TargetType="Button">
             <Setter Property="FontFamily" Value="Segoe UI" />
             <Setter Property="FontSize" Value="16" />
-            <Setter Property="Margin" Value="10" />
-            <Setter Property="Padding" Value="10,5" />
-            <Setter Property="Background" Value="#4CAF50" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="8" />
+            <Setter Property="Padding" Value="16,8" />
+            <Setter Property="Background" Value="#6200EE" />
             <Setter Property="Foreground" Value="White" />
-            <Setter Property="BorderBrush" Value="DarkGray" />
-            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Effect">
-                <Setter.Value>
-                    <DropShadowEffect ShadowDepth="4" BlurRadius="6" Color="Black" />
-                </Setter.Value>
-            </Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Rectangle Fill="{TemplateBinding Background}" RadiusX="5" RadiusY="5" />
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Grid>
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                CornerRadius="8" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}">
+                            <Grid>
+                                <ContentPresenter HorizontalAlignment="Center" 
+                                                  VerticalAlignment="Center" />
+                            </Grid>
+                        </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#45A049" />
+                                <Setter Property="Background" Value="#7F39FB" TargetName="border" />
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect ShadowDepth="3" BlurRadius="5" Color="#7F000000" Opacity="0.5" />
+                                    </Setter.Value>
+                                </Setter>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#388E3C" />
+                                <Setter Property="Background" Value="#3700B3" TargetName="border" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#CCCCCC" TargetName="border" />
+                                <Setter Property="Foreground" Value="#777777" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -44,52 +62,197 @@
             </Setter>
         </Style>
 
-        <!-- Stil za tekst -->
-        <Style TargetType="TextBlock">
+        <!-- Action button style -->
+        <Style x:Key="ActionButtonStyle" TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
+            <Setter Property="Background" Value="#03DAC6" />
+            <Setter Property="Foreground" Value="#000000" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#00ECD6" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#00B3A6" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Theme button style -->
+        <Style x:Key="ThemeButtonStyle" TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
+            <Setter Property="Width" Value="160" />
+            <Setter Property="Height" Value="50" />
+            <Setter Property="Margin" Value="4,0" />
+            <Setter Property="FontSize" Value="15" />
+        </Style>
+
+        <!-- Modern TextBox Style -->
+        <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
             <Setter Property="FontFamily" Value="Segoe UI" />
-            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="Padding" Value="15,10" />
+            <Setter Property="Background" Value="#FFFFFF" />
+            <Setter Property="Foreground" Value="#212121" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                CornerRadius="8" 
+                                BorderThickness="1"
+                                BorderBrush="#E0E0E0">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                          Focusable="False" 
+                                          HorizontalScrollBarVisibility="Hidden" 
+                                          VerticalScrollBarVisibility="Hidden" 
+                                          Margin="5"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="BorderBrush" Value="#6200EE" TargetName="border" />
+                            </Trigger>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#6200EE" TargetName="border" />
+                                <Setter Property="BorderThickness" Value="2" TargetName="border" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect ShadowDepth="2" BlurRadius="4" Color="#20000000" Opacity="0.3" />
+                </Setter.Value>
+            </Setter>
         </Style>
     </Window.Resources>
 
-    <Grid>
-        <!-- Pozadina sa gradijentom -->
-        <Grid.Background>
-            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#FFB74D" Offset="0.0" />
-                <GradientStop Color="#F57C00" Offset="1.0" />
-            </LinearGradientBrush>
-        </Grid.Background>
+    <Border CornerRadius="20" Background="White">
+        <Grid>
+            <!-- Main Background -->
+            <Border CornerRadius="20">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#F5F7FA" Offset="0.0" />
+                        <GradientStop Color="#E4EBF5" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
 
-        <!-- Tema dugmad -->
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10">
-            <Button x:Name="AnimalsButton" Content="Životinje" Width="120" Height="40" Click="AnimalsButton_Click"/>
-            <Button x:Name="CitiesButton" Content="Gradovi" Width="120" Height="40" Click="CitiesButton_Click"/>
-            <Button x:Name="ObjectsButton" Content="Predmeti" Width="120" Height="40" Click="ObjectsButton_Click"/>
-            <Button x:Name="NumbersButton" Content="Brojevi" Width="120" Height="40" Click="NumbersButton_Click"/>
-            <Button x:Name="FruitsButton" Content="Voće i povrće" Width="120" Height="40" Click="FruitsButton_Click"/>
-            <Button x:Name="RandomButton" Content="Nasumično" Width="120" Height="40" Click="RandomButton_Click"/>
-        </StackPanel>
+            <!-- Window Controls -->
+            <Grid VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,15,15,0">
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="MinimizeButton" Width="30" Height="30" Margin="5,0" 
+                            Background="Transparent" BorderThickness="0" Click="MinimizeButton_Click">
+                        <TextBlock Text="—" FontSize="16" Foreground="#444444" VerticalAlignment="Center" />
+                    </Button>
+                    <Button x:Name="CloseButton" Width="30" Height="30" Margin="5,0" 
+                            Background="Transparent" BorderThickness="0" Click="CloseButton_Click">
+                        <TextBlock Text="✕" FontSize="16" Foreground="#444444" VerticalAlignment="Center" />
+                    </Button>
+                </StackPanel>
+            </Grid>
 
-        <!-- Tekstualni status -->
-        <TextBlock x:Name="StatusText" HorizontalAlignment="Center" VerticalAlignment="Center" 
-                   FontSize="24" FontWeight="Bold" TextAlignment="Center" />
+            <!-- Title -->
+            <TextBlock Text="MEMORY GAME" HorizontalAlignment="Left" VerticalAlignment="Top" 
+                       Margin="30,20,0,0" FontSize="32" FontWeight="Bold" Foreground="#6200EE">
+                <TextBlock.Effect>
+                    <DropShadowEffect ShadowDepth="1" BlurRadius="3" Color="#7F000000" Opacity="0.2" />
+                </TextBlock.Effect>
+            </TextBlock>
 
-        <!-- Tekstualni unos -->
-        <TextBox x:Name="InputTextBox" HorizontalAlignment="Center" VerticalAlignment="Bottom" 
-                 Width="300" Height="40" Margin="0,0,0,140" IsEnabled="False" Visibility="Hidden"
-                 FontSize="16" KeyDown="InputTextBox_KeyDown"
-                 Background="White" Foreground="Black" BorderBrush="DarkGray" />
+            <!-- Main Content -->
+            <Grid Margin="0,80,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-        <!-- Dugme za potvrdu -->
-        <Button x:Name="SubmitButton" Content="Potvrdi" HorizontalAlignment="Center" VerticalAlignment="Bottom" 
-                Width="100" Height="40" Margin="0,0,0,80" IsEnabled="False" Visibility="Hidden" Click="SubmitButton_Click"/>
+                <!-- Theme buttons in a regular panel (no scrollbar) -->
+                <Border Grid.Row="0" Background="#FFFFFF" CornerRadius="15" Margin="30,0,30,20"
+                        BorderThickness="0" Effect="{StaticResource ResourceKey=ModernCardEffect}">
+                    <Grid>
+                        <UniformGrid Rows="1" HorizontalAlignment="Center" Margin="10">
+                            <Button x:Name="AnimalsButton" Content="Životinje" Style="{StaticResource ThemeButtonStyle}" Click="AnimalsButton_Click"/>
+                            <Button x:Name="CitiesButton" Content="Gradovi" Style="{StaticResource ThemeButtonStyle}" Click="CitiesButton_Click"/>
+                            <Button x:Name="ObjectsButton" Content="Predmeti" Style="{StaticResource ThemeButtonStyle}" Click="ObjectsButton_Click"/>
+                            <Button x:Name="NumbersButton" Content="Brojevi" Style="{StaticResource ThemeButtonStyle}" Click="NumbersButton_Click"/>
+                            <Button x:Name="FruitsButton" Content="Voće i povrće" Style="{StaticResource ThemeButtonStyle}" Click="FruitsButton_Click"/>
+                            <Button x:Name="RandomButton" Content="Nasumično" Style="{StaticResource ThemeButtonStyle}" Click="RandomButton_Click"/>
+                        </UniformGrid>
+                    </Grid>
+                </Border>
 
-        <!-- Dugme za restartovanje -->
-        <Button x:Name="RestartButton" Content="Ponovi" HorizontalAlignment="Center" VerticalAlignment="Bottom" 
-                Width="100" Height="40" Margin="0,0,0,100" Visibility="Hidden" Click="RestartButton_Click"/>
+                <!-- Game Area -->
+                <Border Grid.Row="1" Background="#FFFFFF" CornerRadius="15" Margin="30,0,30,20"
+                        BorderThickness="0" Effect="{StaticResource ResourceKey=ModernCardEffect}">
+                    <Grid>
+                        <!-- Status Text -->
+                        <TextBlock x:Name="StatusText" FontSize="24" FontWeight="SemiBold" 
+                                   TextAlignment="Center" TextWrapping="Wrap" Foreground="#333333"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20" />
 
-        <Button x:Name="StartGameButton" Content="Pokreni igru" HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                 Width="150" Height="40" Margin="0,0,0,100" Visibility="Hidden" Click="StartGameButton_Click"/>
+                        <!-- Level Indicator -->
+                        <Border x:Name="LevelIndicator" Background="#6200EE" CornerRadius="10"
+                                Width="80" Height="80" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Margin="0,20,20,0" Visibility="Collapsed">
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="NIVO" FontSize="14" FontWeight="Bold" 
+                                           Foreground="White" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="LevelText" Text="1" FontSize="32" FontWeight="Bold" 
+                                           Foreground="White" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
 
-    </Grid>
+                <!-- Input Area -->
+                <Grid Grid.Row="2" Margin="30,0,30,30">
+                    <StackPanel>
+                        <!-- Input TextBox -->
+                        <TextBox x:Name="InputTextBox" Style="{StaticResource ModernTextBoxStyle}"
+                                Width="500" Height="60" HorizontalAlignment="Center" 
+                                Margin="0,0,0,20" IsEnabled="False" Visibility="Hidden"
+                                FontSize="18" KeyDown="InputTextBox_KeyDown"
+                                TextAlignment="Center" MaxLength="100" />
+
+                        <!-- Game Control Buttons -->
+                        <Grid>
+                            <Button x:Name="SubmitButton" Content="POTVRDI" Style="{StaticResource ActionButtonStyle}"
+                                    Width="200" Height="50" IsEnabled="False" Visibility="Hidden" 
+                                    Click="SubmitButton_Click"/>
+
+                            <Button x:Name="RestartButton" Content="PONOVI IGRU" Style="{StaticResource ActionButtonStyle}"
+                                    Width="200" Height="50" Visibility="Hidden" 
+                                    Click="RestartButton_Click"/>
+
+                            <Button x:Name="StartGameButton" Content="POKRENI IGRU" Style="{StaticResource ActionButtonStyle}"
+                                    Width="200" Height="50" Visibility="Hidden" 
+                                    Click="StartGameButton_Click"/>
+                        </Grid>
+
+                        <!-- High Score Display -->
+                        <Border x:Name="HighScorePanel" Background="#F4F6F8" CornerRadius="8" 
+                                Margin="0,20,0,0" Padding="15,10" HorizontalAlignment="Center"
+                                BorderThickness="1" BorderBrush="#E0E0E0" Visibility="Visible">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="🏆" FontSize="18" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <TextBlock x:Name="HighScoreText" Text="Najviši rezultat: 0" 
+                                           FontSize="16" FontWeight="SemiBold" 
+                                           Foreground="#333333" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+
+    <!-- Define resource at root scope -->
+    <Window.Effect>
+        <DropShadowEffect ShadowDepth="5" BlurRadius="15" Color="#20000000" Opacity="0.5" />
+    </Window.Effect>
+
+    <!-- Additional resources -->
+
 </Window>
