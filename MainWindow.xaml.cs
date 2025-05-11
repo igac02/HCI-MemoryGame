@@ -130,18 +130,22 @@ namespace MemoryGameWPF
 
             Task.Delay(displayDuration).ContinueWith(_ => Dispatcher.Invoke(() =>
             {
-                // Prompt for user input
-                StatusText.Text = "Vaš red! Unesite zapamćenu sekvencu.";
+                // Dodatna provjera da li je igra resetovana dok je sekvenca prikazana
+                if (currentLevel > 0)
+                {
+                    // Prompt for user input
+                    StatusText.Text = "Vaš red! Unesite zapamćenu sekvencu.";
 
-                // Show and enable input controls
-                InputTextBox.Visibility = Visibility.Visible;
-                SubmitButton.Visibility = Visibility.Visible;
-                InputTextBox.IsEnabled = true;
-                SubmitButton.IsEnabled = true;
+                    // Show and enable input controls
+                    InputTextBox.Visibility = Visibility.Visible;
+                    SubmitButton.Visibility = Visibility.Visible;
+                    InputTextBox.IsEnabled = true;
+                    SubmitButton.IsEnabled = true;
 
-                // Clear previous input and focus
-                InputTextBox.Clear();
-                InputTextBox.Focus();
+                    // Clear previous input and focus
+                    InputTextBox.Clear();
+                    InputTextBox.Focus();
+                }
             }));
         }
 
@@ -264,8 +268,8 @@ namespace MemoryGameWPF
             // Set the word list for the theme
             wordsFromFile = words;
 
-            // Reset game state
-            ResetGame();
+            // Reset game state uključujući i stopiranje tajmera
+            CompletelyResetGame();
 
             // Update UI
             StatusText.Text = $"Odabrana tema: {themeName}. Pritisnite 'POKRENI IGRU' za početak.";
@@ -291,6 +295,27 @@ namespace MemoryGameWPF
             RestartButton.Visibility = Visibility.Hidden;
             InputTextBox.Visibility = Visibility.Hidden;
             SubmitButton.Visibility = Visibility.Hidden;
+        }
+
+        private void CompletelyResetGame()
+        {
+            // Zaustavi sve tajmere
+            if (timer != null && timer.IsEnabled)
+            {
+                timer.Stop();
+            }
+
+            if (counterTimer != null && counterTimer.IsEnabled)
+            {
+                counterTimer.Stop();
+            }
+
+            // Otkaži sve zakazane Task-ove
+            // Napomena: Ne možemo eksplicitno poništiti već zakazane Task-ove,
+            // ali možemo dodati provjeru unutar continuations-a
+
+            // Pozovi standardno resetovanje igre
+            ResetGame();
         }
 
         #region Word Lists
@@ -436,4 +461,4 @@ namespace MemoryGameWPF
         }
     }
 }
-        #endregion
+#endregion
