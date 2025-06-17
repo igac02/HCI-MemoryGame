@@ -208,10 +208,11 @@ namespace MemoryGameWPF
         private void RestartButton_Click(object sender, RoutedEventArgs e)
         {
             ResetGame();
-            StatusText.Text = "Igra je resetovana. Odaberite temu i pritisnite 'POKRENI IGRU'.";
-            RestartButton.Visibility = Visibility.Hidden;
-            StartGameButton.Visibility = Visibility.Visible;
-            LevelIndicator.Visibility = Visibility.Collapsed;
+            StartGame();
+            //StatusText.Text = "Igra je resetovana. Odaberite temu i pritisnite 'POKRENI IGRU'.";
+            //RestartButton.Visibility = Visibility.Hidden;
+            //StartGameButton.Visibility = Visibility.Visible;
+            //LevelIndicator.Visibility = Visibility.Collapsed;
         }
 
         private void InputTextBox_KeyDown(object sender, KeyEventArgs e)
